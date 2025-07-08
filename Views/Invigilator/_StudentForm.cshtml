@@ -1,0 +1,45 @@
+﻿@model Student_Record_Management_System.Models.StudentRecord
+
+<form id="studentForm" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input asp-for="RollNumber" type="hidden" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Maths"></label>
+        <input asp-for="Maths" class="form-control" type="number" />
+        <span asp-validation-for="Maths" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Physics"></label>
+        <input asp-for="Physics" class="form-control" type="number" />
+        <span asp-validation-for="Physics" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Chemistry"></label>
+        <input asp-for="Chemistry" class="form-control" type="number" />
+        <span asp-validation-for="Chemistry" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="English"></label>
+        <input asp-for="English" class="form-control" type="number" />
+        <span asp-validation-for="English" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Programming"></label>
+        <input asp-for="Programming" class="form-control" type="number" />
+        <span asp-validation-for="Programming" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

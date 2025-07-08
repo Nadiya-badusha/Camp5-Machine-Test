@@ -1,0 +1,279 @@
+﻿@model List<Student_Record_Management_System.Models.StudentRecord>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Invigilator Dashboard</title>
+    <style>
+        /* your existing styles… */ body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .text-danger {
+            font-size: 13px;
+            color: #e63946;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background-color: #1d3557;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background-color: #457b9d;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 99;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 20px;
+            width: 400px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+            .modal-content h3 {
+                margin-top: 0;
+                color: #1d3557;
+            }
+
+            .modal-content input {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 12px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .modal-content label {
+                font-weight: 500;
+            }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .message {
+            color: midnightblue;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>All Student Records</h2>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+
+    <form method="get" asp-action="Dashboard">
+        <input type="number" name="rollNumber" placeholder="Roll Number" />
+        <button type="submit" class="btn btn-secondary">Search</button>
+        <a asp-action="Dashboard" class="btn">Reset</a>
+    </form>
+
+    @if (TempData["Message"] != null)
+    {
+        <p class="message">@TempData["Message"]</p>
+    }
+
+    <button class="btn btn-primary" onclick="openCreateModal()">+ Add Student</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Roll</th>
+                <th>Name</th>
+                <th>Maths</th>
+                <th>Physics</th>
+                <th>Chemistry</th>
+                <th>English</th>
+                <th>Programming</th>
+                <th>Total</th>
+                <th>Grade</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.RollNumber</td>
+                    <td>@s.Name</td>
+                    <td>@s.Maths</td>
+                    <td>@s.Physics</td>
+                    <td>@s.Chemistry</td>
+                    <td>@s.English</td>
+                    <td>@s.Programming</td>
+                    <td>@s.TotalMarks</td>
+                    <td>@s.Grade</td>
+                    <td>
+                        <button class="btn btn-secondary"
+                                onclick='openEditModal(@Html.Raw(Json.Serialize(s)))'>
+                            Edit
+                        </button>
+                        <a asp-action="Delete" asp-route-rollNumber="@s.RollNumber"
+                           class="btn btn-danger"
+                           onclick="return confirm('Are you sure?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Modal -->
+    <div id="studentModal" class="modal" style="display:none">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+
+            @* Inject the partial; the form posts to whichever action you set below *@
+            @await Html.PartialAsync("_StudentForm",
+                     ViewData["FormModel"] as Student_Record_Management_System.Models.StudentRecord
+                     ?? new Student_Record_Management_System.Models.StudentRecord())
+        </div>
+    </div>
+
+    <!-- 1) Load jQuery & Validation FIRST -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- 2) Then your custom modal + validation wiring -->
+    <script>
+        // Prevent form post unless valid
+        $('#studentForm').on('submit', function() {
+            return $(this).valid();
+        });
+
+        function rebindValidation() {
+            var form = $("#studentForm");
+            form.removeData("validator");
+            form.removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+        }
+
+        function openCreateModal() {
+            $("#studentForm").attr("action", "/Invigilator/Create");
+            $("#studentForm")[0].reset();
+            $("#modalTitle").text("Create Student");
+            $("#studentModal").show();
+            rebindValidation();
+        }
+
+        function openEditModal(student) {
+            $("#studentForm").attr("action", "/Invigilator/Edit");
+            $("#RollNumber").val(student.RollNumber);
+            $("#Name").val(student.Name);
+            $("#Maths").val(student.Maths);
+            $("#Physics").val(student.Physics);
+            $("#Chemistry").val(student.Chemistry);
+            $("#English").val(student.English);
+            $("#Programming").val(student.Programming);
+            $("#modalTitle").text("Edit Student");
+            $("#studentModal").show();
+            rebindValidation();
+        }
+
+        function closeModal() {
+            $("#studentModal").hide();
+        }
+
+        // If server-side validation failed, reopen modal
+              $(function() {
+          var show = '@(ViewData["ShowModal"] ?? "")';
+          if (show === "Create") {
+            openCreateModal();
+          }
+          else if (show === "Edit") {
+            // serialize the invalid StudentRecord that the controller put in ViewData["FormModel"]
+            var model = @Html.Raw(
+               Newtonsoft.Json.JsonConvert.SerializeObject(
+                 ViewData["FormModel"]
+            as Student_Record_Management_System.Models.StudentRecord
+               )
+            );
+            openEditModal(model);
+          }
+        });
+    </script>
+
+</body>
+</html>

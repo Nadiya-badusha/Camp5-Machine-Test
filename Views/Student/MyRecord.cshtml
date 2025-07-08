@@ -1,0 +1,90 @@
+﻿@model Student_Record_Management_System.Models.StudentRecord
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My Record</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin: 0;
+            color: #1d3557;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+            .btn-danger:hover {
+                opacity: 0.9;
+            }
+
+        .record-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 12px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        strong {
+            display: inline-block;
+            width: 150px;
+            color: #457b9d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Welcome, @Model.Name</h2>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="btn-danger">Logout</button>
+        </form>
+    </div>
+
+    <div class="record-container">
+        <p><strong>Roll Number:</strong> @Model.RollNumber</p>
+        <p><strong>Maths:</strong> @Model.Maths</p>
+        <p><strong>Physics:</strong> @Model.Physics</p>
+        <p><strong>Chemistry:</strong> @Model.Chemistry</p>
+        <p><strong>English:</strong> @Model.English</p>
+        <p><strong>Programming:</strong> @Model.Programming</p>
+        <p><strong>Total Marks (out of 500):</strong> @Model.TotalMarks</p>
+        <p><strong>Grade:</strong> @Model.Grade</p>
+    </div>
+
+</body>
+</html>
+
